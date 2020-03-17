@@ -3,6 +3,7 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.TextUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,9 +61,20 @@ public class DetailActivity extends AppCompatActivity {
         ImageView imageImageView = findViewById(R.id.image_iv);
         TextView ingredientsTextView = findViewById(R.id.ingredients_tv);
 
+        LinearLayoutCompat alsoKnownSection = findViewById(R.id.also_known_section);
+        LinearLayoutCompat originSection = findViewById(R.id.origin_section);
+
         setTitle(mSandwich.getMainName());
-        alsoKnownTextView.setText(TextUtils.join(", ", mSandwich.getAlsoKnownAs()));
-        originTextView.setText(mSandwich.getPlaceOfOrigin());
+        if (!mSandwich.getAlsoKnownAs().isEmpty()) {
+            alsoKnownTextView.setText(TextUtils.join(", ", mSandwich.getAlsoKnownAs()));
+        } else {
+            alsoKnownSection.setVisibility(LinearLayoutCompat.GONE);
+        }
+        if (!mSandwich.getPlaceOfOrigin().equals("")) {
+            originTextView.setText(mSandwich.getPlaceOfOrigin());
+        } else {
+            originSection.setVisibility(LinearLayoutCompat.GONE);
+        }
         descriptionTextView.setText(mSandwich.getDescription());
         Picasso.with(this)
                 .load(mSandwich.getImage())
