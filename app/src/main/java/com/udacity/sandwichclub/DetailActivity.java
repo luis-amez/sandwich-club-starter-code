@@ -3,7 +3,9 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
@@ -15,12 +17,12 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
 
+    private Sandwich mSandwich;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        ImageView ingredientsIv = findViewById(R.id.image_iv);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -36,19 +38,14 @@ public class DetailActivity extends AppCompatActivity {
 
         String[] sandwiches = getResources().getStringArray(R.array.sandwich_details);
         String json = sandwiches[position];
-        Sandwich sandwich = JsonUtils.parseSandwichJson(json);
-        if (sandwich == null) {
+        mSandwich = JsonUtils.parseSandwichJson(json);
+        if (mSandwich == null) {
             // Sandwich data unavailable
             closeOnError();
             return;
         }
 
         populateUI();
-        Picasso.with(this)
-                .load(sandwich.getImage())
-                .into(ingredientsIv);
-
-        setTitle(sandwich.getMainName());
     }
 
     private void closeOnError() {
@@ -57,6 +54,19 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI() {
+        TextView alsoKnownTextView = findViewById(R.id.also_known_tv);
+        TextView originTextView = findViewById(R.id.origin_tv);
+        TextView descriptionTextView = findViewById(R.id.description_tv);
+        ImageView imageImageView = findViewById(R.id.image_iv);
+        TextView ingredientsTextView = findViewById(R.id.ingredients_tv);
 
+        setTitle(mSandwich.getMainName());
+        alsoKnownTextView.setText(TextUtils.join(", ", mSandwich.getAlsoKnownAs()));
+        originTextView.setText(mSandwich.getPlaceOfOrigin());
+        descriptionTextView.setText(mSandwich.getDescription());
+        Picasso.with(this)
+                .load(mSandwich.getImage())
+                .into(imageImageView);
+        ingredientsTextView.setText(TextUtils.join(", ", mSandwich.getIngredients()));
     }
 }
